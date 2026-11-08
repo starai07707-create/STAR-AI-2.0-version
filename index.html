@@ -1,138 +1,213 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>STAR AI | STAR GLOBAL TECH</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;
- background:#080808;
- color:#fff;
- font-family:Arial,sans-serif;
- display:flex;
- flex-direction:column;
- min-height:100vh;
+ margin:0;font-family:Arial,sans-serif;color:white;
+ background:linear-gradient(135deg,#030616,#10102d,#190b35);
+ background-image:linear-gradient(#030616aa,#08051dcc),url("galaxy-bg.jpg");
+ background-size:cover;background-attachment:fixed;background-position:center;
+ min-height:100vh
 }
-header{
- padding:20px;
- border-bottom:1px solid #b89445;
- display:flex;
- align-items:center;
- gap:12px;
+header{display:flex;align-items:center;gap:12px;padding:16px 5%;border-bottom:1px solid #ffffff22}
+header img{width:48px;height:48px;object-fit:contain}
+.brand{font-size:23px;font-weight:bold;letter-spacing:2px}
+small{color:#aaa}
+main{max-width:850px;margin:35px auto;padding:18px}
+.panel{
+ background:#080d20dd;border:1px solid #7773;border-radius:20px;
+ padding:24px;margin-bottom:20px;box-shadow:0 0 30px #5226a533
 }
-.logo{
- color:#e5bd68;
- font-size:30px;
+h1{font-size:36px;margin:8px 0;color:#d9d9ff}
+h2{font-size:22px}
+p{color:#c4c6d8;line-height:1.6}
+input,button,select,textarea{
+ width:100%;padding:14px;margin:8px 0;border-radius:10px;
+ border:1px solid #7778;background:#111a32;color:white;font-size:16px
 }
-h1{font-size:22px;margin:0}
-header p{color:#aaa;font-size:11px;margin:4px 0}
-main{
- width:100%;
- max-width:750px;
- margin:auto;
- padding:24px 16px;
- flex:1;
-}
-.hero{text-align:center;margin:35px 0}
-.hero h2{color:#e5bd68;font-size:32px}
-.hero p{color:#aaa}
-.chat{
- background:#151515;
- border:1px solid #554525;
- border-radius:16px;
- padding:16px;
- min-height:280px;
-}
-#messages{min-height:210px}
-.message{
- padding:12px;
- margin:10px 0;
- border-radius:12px;
- background:#242424;
- line-height:1.5;
- overflow-wrap:anywhere;
-}
-.user{border:1px solid #b89445}
-form{display:flex;gap:8px;margin-top:12px}
-input{
- flex:1;min-width:0;
- padding:14px;
- border-radius:10px;
- border:1px solid #b89445;
- background:#080808;color:white;
-}
-button{
- padding:12px 18px;
- background:#d5ad5a;
- border:0;border-radius:10px;
- font-weight:bold;cursor:pointer;
-}
-footer{
- text-align:center;padding:20px;
- color:#888;font-size:12px;
-}
+button{background:linear-gradient(90deg,#5142d9,#933ee8);border:0;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
+.secondary{background:#202844}
+.row{display:flex;gap:10px}
+.row>*{flex:1;min-width:0}
+#app{display:none}
+#messages{height:300px;overflow-y:auto;background:#050918;padding:14px;border-radius:12px}
+.msg{padding:12px;margin:8px 0;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.user{background:#30246a;text-align:right}
+.ai{background:#18213a}
+.tools{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tool{background:#171d39;padding:18px;border-radius:12px;border:1px solid #7774}
+footer{text-align:center;color:#aaa;padding:25px;font-size:13px}
+#status{color:#b7a7ff;min-height:22px}
+@media(max-width:550px){h1{font-size:28px}.row{flex-direction:column}.panel{padding:17px}}
 </style>
 </head>
 <body>
+
 <header>
- <div class="logo">♛</div>
- <div>
-  <h1>STAR AI</h1>
-  <p>BY STAR GLOBAL TECH</p>
- </div>
+ <img src="star-logo.png" alt="STAR AI logo">
+ <div><div class="brand">STAR AI</div><small>by STAR GLOBAL TECH</small></div>
 </header>
 
 <main>
- <section class="hero">
-  <h2>✦ Welcome to STAR AI</h2>
-  <p>Your intelligent AI assistant.</p>
+ <section class="panel" id="welcome">
+  <h1>WELCOME TO STAR AI</h1>
+  <p>Your Intelligent AI Universe.</p>
   <p>Think Beyond. Create Beyond.</p>
+  <p>Discover a new world of intelligence, creativity and innovation.</p>
  </section>
 
- <section class="chat">
-  <div id="messages">
-   <div class="message">
-    Hello! I am STAR AI. How can I help you today?
-   </div>
+ <section class="panel" id="auth">
+  <h2>Sign up / Login</h2>
+  <p>Enter your email address. We'll send you a verification code. No password required.</p>
+  <input id="email" type="email" placeholder="Enter your email address" autocomplete="email">
+  <button id="sendCode">Send verification code</button>
+  <div id="otpArea" style="display:none">
+   <input id="otp" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit code">
+   <button id="verifyCode">Verify & Continue</button>
   </div>
-  <form id="chatForm">
-   <input id="userInput" placeholder="Ask STAR AI anything..." required>
-   <button type="submit">Send</button>
-  </form>
+  <p id="status"></p>
+ </section>
+
+ <section id="app">
+  <section class="panel">
+   <div class="row" style="align-items:center">
+    <h2 style="flex:2">STAR AI Assistant</h2>
+    <button class="secondary" id="logout" style="flex:1">Log out</button>
+   </div>
+   <p id="signedIn"></p>
+   <div id="messages">
+    <div class="msg ai">Welcome to STAR AI! Ask me anything.</div>
+   </div>
+   <select id="language">
+    <option value="auto">Auto detect language</option>
+    <option value="Tamil">தமிழ்</option>
+    <option value="English">English</option>
+    <option value="Hindi">हिन्दी</option>
+    <option value="Korean">한국어</option>
+    <option value="Japanese">日本語</option>
+    <option value="Chinese">中文</option>
+    <option value="French">Français</option>
+    <option value="Spanish">Español</option>
+    <option value="Arabic">العربية</option>
+    <option value="German">Deutsch</option>
+   </select>
+   <textarea id="question" rows="3" placeholder="Message STAR AI..."></textarea>
+   <button id="sendMessage">Send message</button>
+   <p id="chatStatus"></p>
+  </section>
+
+  <section class="panel">
+   <h2>Explore AI Universe</h2>
+   <div class="tools">
+    <div class="tool">💬<br><b>AI Chat</b><br><small>Available</small></div>
+    <div class="tool">🎨<br><b>AI Image Studio</b><br><small>Coming soon</small></div>
+    <div class="tool">🎬<br><b>AI Video Studio</b><br><small>Coming soon</small></div>
+    <div class="tool">🎙️<br><b>AI Voice Studio</b><br><small>Coming soon</small></div>
+   </div>
+  </section>
+ </section>
+
+ <section class="panel">
+  <h2>Our Vision</h2>
+  <p>Building the Future Through Artificial Intelligence and Innovation.</p>
+  <p><b>STAR GLOBAL TECH</b><br>
+  Founder & Group CEO: Jemi Angelin Selvaraj</p>
  </section>
 </main>
 
-<footer>
- STAR AI © 2026 STAR GLOBAL TECH<br>
- Founder & CEO: Jemi Angelin Selvaraj
-</footer>
+<footer>STAR AI © 2026 · STAR GLOBAL TECH<br>Think Beyond. Create Beyond.</footer>
 
 <script>
-const form=document.getElementById("chatForm");
-const input=document.getElementById("userInput");
-const messages=document.getElementById("messages");
+// Add your Supabase project details here.
+// These are public project settings, not secret service-role keys.
+const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 
-form.addEventListener("submit",function(e){
- e.preventDefault();
- const text=input.value.trim();
- if(!text)return;
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const $ = id => document.getElementById(id);
 
- const msg=document.createElement("div");
- msg.className="message user";
- msg.textContent=text;
- messages.appendChild(msg);
+$("sendCode").onclick = async () => {
+ const email = $("email").value.trim();
+ if (!email) return $("status").textContent = "Enter your email address.";
+ $("sendCode").disabled = true;
+ $("status").textContent = "Sending verification code...";
+ const {error} = await db.auth.signInWithOtp({
+  email,
+  options:{shouldCreateUser:true}
+ });
+ $("sendCode").disabled = false;
+ if(error) return $("status").textContent = error.message;
+ $("otpArea").style.display = "block";
+ $("status").textContent = "Check your email for the 6-digit code.";
+};
 
- const reply=document.createElement("div");
- reply.className="message";
- reply.textContent="Your message is received! AI connection will be enabled in the next development stage.";
- messages.appendChild(reply);
+$("verifyCode").onclick = async () => {
+ const email = $("email").value.trim();
+ const token = $("otp").value.trim();
+ if(!email || !token) return $("status").textContent = "Enter your email and code.";
+ $("status").textContent = "Verifying...";
+ const {error} = await db.auth.verifyOtp({
+  email, token, type:"email"
+ });
+ if(error) return $("status").textContent = error.message;
+ $("status").textContent = "Verified!";
+};
 
- input.value="";
- messages.scrollTop=messages.scrollHeight;
-});
+async function updateSession(){
+ const {data:{session}} = await db.auth.getSession();
+ $("auth").style.display = session ? "none" : "block";
+ $("app").style.display = session ? "block" : "none";
+ if(session) $("signedIn").textContent = "Signed in as " + session.user.email;
+}
+db.auth.onAuthStateChange(() => updateSession());
+updateSession();
+
+$("logout").onclick = async () => {
+ await db.auth.signOut();
+ $("messages").innerHTML = "";
+ updateSession();
+};
+
+function addMessage(text, type){
+ const div = document.createElement("div");
+ div.className = "msg " + type;
+ div.textContent = text;
+ $("messages").appendChild(div);
+ $("messages").scrollTop = $("messages").scrollHeight;
+}
+
+$("sendMessage").onclick = async () => {
+ const message = $("question").value.trim();
+ if(!message) return;
+ addMessage(message,"user");
+ $("question").value = "";
+ $("chatStatus").textContent = "STAR AI is thinking...";
+ $("sendMessage").disabled = true;
+ try{
+  const response = await fetch("/api/chat",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    message,
+    language:$("language").value
+   })
+  });
+  const data = await response.json();
+  if(!response.ok) throw new Error(data.error || "AI request failed");
+  addMessage(data.reply || "No response received.","ai");
+  $("chatStatus").textContent = "";
+ }catch(error){
+  $("chatStatus").textContent = "Error: " + error.message;
+ }finally{
+  $("sendMessage").disabled = false;
+ }
+};
 </script>
 </body>
-</html>
+     </html>
