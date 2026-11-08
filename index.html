@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STAR AI | STAR GLOBAL TECH</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#080808;
+ color:#fff;
+ font-family:Arial,sans-serif;
+ display:flex;
+ flex-direction:column;
+ min-height:100vh;
+}
+header{
+ padding:20px;
+ border-bottom:1px solid #b89445;
+ display:flex;
+ align-items:center;
+ gap:12px;
+}
+.logo{
+ color:#e5bd68;
+ font-size:30px;
+}
+h1{font-size:22px;margin:0}
+header p{color:#aaa;font-size:11px;margin:4px 0}
+main{
+ width:100%;
+ max-width:750px;
+ margin:auto;
+ padding:24px 16px;
+ flex:1;
+}
+.hero{text-align:center;margin:35px 0}
+.hero h2{color:#e5bd68;font-size:32px}
+.hero p{color:#aaa}
+.chat{
+ background:#151515;
+ border:1px solid #554525;
+ border-radius:16px;
+ padding:16px;
+ min-height:280px;
+}
+#messages{min-height:210px}
+.message{
+ padding:12px;
+ margin:10px 0;
+ border-radius:12px;
+ background:#242424;
+ line-height:1.5;
+ overflow-wrap:anywhere;
+}
+.user{border:1px solid #b89445}
+form{display:flex;gap:8px;margin-top:12px}
+input{
+ flex:1;min-width:0;
+ padding:14px;
+ border-radius:10px;
+ border:1px solid #b89445;
+ background:#080808;color:white;
+}
+button{
+ padding:12px 18px;
+ background:#d5ad5a;
+ border:0;border-radius:10px;
+ font-weight:bold;cursor:pointer;
+}
+footer{
+ text-align:center;padding:20px;
+ color:#888;font-size:12px;
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">♛</div>
+ <div>
+  <h1>STAR AI</h1>
+  <p>BY STAR GLOBAL TECH</p>
+ </div>
+</header>
+
+<main>
+ <section class="hero">
+  <h2>✦ Welcome to STAR AI</h2>
+  <p>Your intelligent AI assistant.</p>
+  <p>Think Beyond. Create Beyond.</p>
+ </section>
+
+ <section class="chat">
+  <div id="messages">
+   <div class="message">
+    Hello! I am STAR AI. How can I help you today?
+   </div>
+  </div>
+  <form id="chatForm">
+   <input id="userInput" placeholder="Ask STAR AI anything..." required>
+   <button type="submit">Send</button>
+  </form>
+ </section>
+</main>
+
+<footer>
+ STAR AI © 2026 STAR GLOBAL TECH<br>
+ Founder & CEO: Jemi Angelin Selvaraj
+</footer>
+
+<script>
+const form=document.getElementById("chatForm");
+const input=document.getElementById("userInput");
+const messages=document.getElementById("messages");
+
+form.addEventListener("submit",function(e){
+ e.preventDefault();
+ const text=input.value.trim();
+ if(!text)return;
+
+ const msg=document.createElement("div");
+ msg.className="message user";
+ msg.textContent=text;
+ messages.appendChild(msg);
+
+ const reply=document.createElement("div");
+ reply.className="message";
+ reply.textContent="Your message is received! AI connection will be enabled in the next development stage.";
+ messages.appendChild(reply);
+
+ input.value="";
+ messages.scrollTop=messages.scrollHeight;
+});
+</script>
+</body>
+</html>
